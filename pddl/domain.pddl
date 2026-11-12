@@ -1,57 +1,57 @@
-; Multi-Snake - Activitat 1 PROP - Primera part: domini
+; Multi-Snake - PROP Activity 1 - Part 1: domain
 ;
-; Correspondencia amb el model formal (documentacio/model_formal.md):
-;   p_k = c              ->  (esta-en ?a ?c)
-;   c no es de W         ->  (esta-buida ?c)   sense paret, rastre ni agent
-;   e_k = c              ->  (sortida ?a ?c)
-;   p_k = bot            ->  (ha-sortit ?a)
-;   P0 (q = x + delta)   ->  (veina ?c1 ?c2)
+; Correspondence with the formal model (documentacio/model_formal.md):
+;   p_k = c              ->  (at ?k ?c)
+;   c in F(S)            ->  (free ?c)    no wall, no trail and no agent on c
+;   e_k = c              ->  (exit ?k ?c)
+;   p_k = bot            ->  (exited ?k)
+;   P0 (q = x + delta)   ->  (adj ?x ?q)
 (define (domain multisnake)
   (:requirements :strips :typing :negative-preconditions)
 
   (:types
-    agent casella
+    agent cell
   )
 
   (:predicates
-    (esta-en ?a - agent ?c - casella)   ; dinamic
-    (esta-buida ?c - casella)           ; dinamic
-    (sortida ?a - agent ?c - casella)   ; estatic
-    (ha-sortit ?a - agent)              ; dinamic
-    (veina ?c1 ?c2 - casella)           ; estatic
+    (at ?k - agent ?c - cell)       ; dynamic
+    (free ?c - cell)                ; dynamic
+    (exit ?k - agent ?c - cell)     ; static
+    (exited ?k - agent)             ; dynamic
+    (adj ?x ?q - cell)              ; static
   )
 
-  ; Cas N: l'agent es mou a una casella lliure que no es la seva sortida.
-  ; La casella que deixa no torna a estar buida: queda com a rastre (paret).
-  (:action moure
-    :parameters (?a - agent ?origen ?desti - casella)
+  ; Case N: agent k moves to a free cell q that is not its own exit.
+  ; The cell x it leaves is never free again: it stays a wall.
+  (:action move
+    :parameters (?k - agent ?x ?q - cell)
     :precondition (and
-      (esta-en ?a ?origen)
-      (veina ?origen ?desti)        ; P0
-      (esta-buida ?desti)           ; P1 i P2
-      (not (sortida ?a ?desti))     ; q diferent de e_k
+      (at ?k ?x)
+      (adj ?x ?q)                   ; P0
+      (free ?q)                     ; P1 and P2
+      (not (exit ?k ?q))            ; q different from e_k
     )
     :effect (and
-      (not (esta-en ?a ?origen))
-      (esta-en ?a ?desti)
-      (not (esta-buida ?desti))
+      (not (at ?k ?x))
+      (at ?k ?q)
+      (not (free ?q))
     )
   )
 
-  ; Cas X: l'agent arriba a la seva sortida i desapareix del tauler.
-  ; La casella que deixa queda com a rastre i la sortida es converteix en paret.
-  (:action sortir
-    :parameters (?a - agent ?origen ?desti - casella)
+  ; Case X: agent k reaches its own exit q = e_k and leaves the board.
+  ; The cell x it leaves stays a wall, and the exit becomes a wall.
+  (:action exit-maze
+    :parameters (?k - agent ?x ?q - cell)
     :precondition (and
-      (esta-en ?a ?origen)
-      (veina ?origen ?desti)        ; P0
-      (esta-buida ?desti)           ; P1 i P2
-      (sortida ?a ?desti)           ; q = e_k
+      (at ?k ?x)
+      (adj ?x ?q)                   ; P0
+      (free ?q)                     ; P1 and P2
+      (exit ?k ?q)                  ; q = e_k
     )
     :effect (and
-      (not (esta-en ?a ?origen))
-      (ha-sortit ?a)
-      (not (esta-buida ?desti))
+      (not (at ?k ?x))
+      (exited ?k)
+      (not (free ?q))
     )
   )
 )
