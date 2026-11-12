@@ -1,25 +1,77 @@
-# Multi-Snake: PROP Q1 26/27, Activity 1
+# Multi-Snake
 
-- GitHub repository: https://github.com/jan-lozano-dev/heuristic-search/
-- Team members: Joan Lozano Funosas, Roger Martínez Rius
+Heuristic search for a multi-agent snake puzzle (PROP Q1 26/27, Activity 1).
+Several snakes share a grid. Each turn one snake moves, and each snake must
+reach its own exit. The project contains a formal model, a PDDL translation,
+and Java search algorithms with heuristics.
+
+> **Status:** work in progress.
 
 ## Contents
 
-| Folder | Contents |
-| --- | --- |
-| pddl/ | A clear definition of the problem's conditions, actions, states, and goal. |
-| documentacio/ | A formal model and proofs of why and how we built our heuristics and our code. Benchmark results and a study. | 
-| ac1-cerca/ |  Different algorithms to solve the same problem, with different heuristics from simpler to more sophisticated. BFS, DFS, IDS, A* in addition to two different heuristics. |
+- [Repository layout](#repository-layout)
+- [Requirements](#requirements)
+- [Build](#build)
+- [Usage](#usage)
+- [Tests](#tests)
+- [Documentation](#documentation)
+- [Results](#results)
+- [Authors](#authors)
 
-## Formal model
+## Repository layout
 
-The design of the pddl, java code and markdown documentation is derived from the extra mathematical proofs within documentacio/model_formal.md
+| Path | Description | Status |
+| --- | --- | --- |
+| [`documentacio/`](documentacio/) | Formal model, proofs, study | In progress |
+| [`pddl/`](pddl/) | `domain.pddl` and `problem.pddl` (map A) | Done |
+| [`ac1-cerca/`](ac1-cerca/) | Search algorithms and heuristics (Java) | In progress |
+| `ac1-model/`, `ac1-app/` | Base project provided by the course | Provided |
 
-## Build and run
+The PDDL, the Java code and the study are all derived from
+[`documentacio/model_formal.md`](documentacio/model_formal.md).
 
-From the project root
+## Requirements
 
-```
+- JDK 17 or newer (developed with JDK 21)
+- Maven 3.x
+
+## Build
+
+From the project root:
+
+```bash
 mvn clean compile
+```
+
+## Usage
+
+```bash
 bash run.sh
 ```
+
+<!-- TODO: arguments, maps, example output -->
+
+## Tests
+
+```bash
+mvn clean test
+```
+
+## Documentation
+
+| File | Content |
+| --- | --- |
+| [`model_formal.md`](documentacio/model_formal.md) | Model, invariants, heuristic admissibility |
+| [`pddl-proof.md`](documentacio/pddl-proof.md) | The PDDL as a translation of the model |
+| `estudi.md` | _TBD_ |
+
+## Results
+
+_TBD._
+
+## Authors
+
+- Joan Lozano Funosas
+- Roger Martínez Rius
+
+Course project, UPC.
