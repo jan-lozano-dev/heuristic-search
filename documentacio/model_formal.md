@@ -57,6 +57,7 @@ For a function ${}p, p[k\mapsto v]{}$ denotes the function equal to ${}p{}$ exce
 
 ## 3. Actions and applicability
 
+Let $\Delta=\lbrace(\pm1,0),(0,\pm1)\rbrace$ be the four unit moves (one cell up, down, left or right).
 Actions are ${}\alpha=(k,\delta)\in I\times\Delta{}$; there are at most ${}4n{}$ of them.
 
 #### Definition 1 (Applicability)
@@ -194,8 +195,10 @@ to $e_k$. Two routes are *disjoint* if they share no cell.
 
 In any valid plan, the routes of different agents are disjoint.
 
-*Proof.* Suppose agents $j\neq k$ both occupy a cell $y$. One move is made per
-turn, so they do not arrive at the same moment: let $j$ be the first to arrive.
+*Proof.* Suppose agents $j\neq k$ both occupy a cell $y$. By (A1), the agents
+start on different cells, so $y$ is not a start cell of both. After that, one move
+is made per turn, so they do not arrive at $y$ at the same moment: let $j$ be the
+first to arrive.
 When $k$ later tries to enter $y$, one of two things holds.
 
 - $j$ is still on $y$. Then (P2) forbids the move.
@@ -243,4 +246,72 @@ as the original plan, so it has the same number of moves, and each costs 1. ∎
 
 ## 8. Heuristic admissibility
 
-_To be written._
+Let $h(S)$ be the estimate that a heuristic computes for a state $S$. Let $h^*(S)$
+be the true cost: the fewest moves from $S$ to a state in $\mathcal{S}_{\text{goal}}$,
+and $\infty$ if no such plan exists. Let $g$ be the cost accumulated from the
+initial state $S_0$. Since each move costs 1, $g$ is the number of moves made so
+far, which is $\text{depth}(S)$ in Corollary 1.
+
+A\* orders its nodes by $f=g+h$. The search never computes $h^*$; it only appears
+in the proofs.
+
+#### Definition 4 (Admissible heuristic)
+
+A heuristic $h$ is admissible if $h(S)\le h^*(S)$ for every reachable state $S$.
+For a dead end, $h^*(S)=\infty$, so the condition holds for any $h$.
+
+#### Definition 5 (Basic heuristic $h_B$)
+
+The Manhattan distance is the case $p=1$ of the Minkowski distance
+$\lVert v\rVert_p=\bigl(\sum_i|v_i|^p\bigr)^{1/p}$, and it measures distance in
+city blocks: $\lVert (a,b)\rVert_1=|a|+|b|$. The basic heuristic sums it over the
+active agents:
+$$h_B(S)=\sum_{k\in U(p)}\lVert p_k-e_k\rVert_1.$$
+In a goal state $U(p)=\emptyset$, so $h_B(S)=0$.
+
+#### Theorem 5 (Admissibility of $h_B$)
+
+For every reachable state $S$, $h_B(S)\le h^*(S)$.
+
+*Proof.* If $S$ is a dead end, $h^*(S)=\infty$ and we are done. Otherwise take a
+plan of $m=h^*(S)$ moves from $S$, and let $m_k$ be the number of moves of agent
+$k$ in it. Each move belongs to one active agent, so $m=\sum_{k\in U(p)}m_k$.
+
+Agent $k$ goes from $p_k$ to $e_k$, so $e_k-p_k$ is a sum of $m_k$ vectors of
+$\Delta$, each of norm 1. By the triangle inequality,
+$\lVert p_k-e_k\rVert_1\le m_k$. Summing over $k\in U(p)$ gives
+$h_B(S)\le m=h^*(S)$. ∎
+
+#### Definition 6 (Advanced heuristic $h_A$)
+
+For $V\subseteq G$ and $a,b\in V$, let $d_V(a,b)$ be the length of the shortest
+path from $a$ to $b$ that moves by vectors of $\Delta$ and stays inside $V$
+(computed by BFS), and $\infty$ if there is none. For an active agent $k$ let
+$$V_k=G\setminus\bigl(W\cup\{p_j : j\neq k\}\bigr)$$
+be the cells that are neither walls nor occupied by another agent. Then
+$$h_A(S)=\sum_{k\in U(p)}d_{V_k}(p_k,e_k),$$
+and $h_A(S)=\infty$ (prune) if some term is $\infty$.
+
+#### Lemma 3 (Routes stay inside $V_k$)
+
+In any plan from a reachable state $S$, every cell that an active agent $k$
+occupies belongs to $V_k$.
+
+*Proof.* Let $y$ be a cell of $k$'s route. It is not in $W$: $y=p_k\notin W$ by
+(I2), and any later cell was entered with (P1), while walls never disappear
+(I1). It is not $p_j$ for $j\neq k$: while $j$ stands on $p_j$, (P2) forbids
+entering it, and once $j$ leaves, $p_j\in W$ and (P1) forbids it. ∎
+
+#### Theorem 6 ($h_B\le h_A\le h^*$)
+
+For every reachable state $S$, $h_B(S)\le h_A(S)\le h^*(S)$.
+
+*Proof.* *Left inequality.* A path of $d$ unit steps from $a$ to $b$ gives
+$\lVert a-b\rVert_1\le d$ (triangle inequality), so
+$\lVert p_k-e_k\rVert_1\le d_{V_k}(p_k,e_k)$ for each $k$. Sum over $k$.
+
+*Right inequality.* If $S$ is a dead end, $h^*(S)=\infty$ and we are done.
+Otherwise take a plan of $m=h^*(S)$ moves. By Lemma 3, the cells of agent $k$'s
+route form a path inside $V_k$ from $p_k$ to $e_k$ with $m_k$ steps, so
+$d_{V_k}(p_k,e_k)\le m_k$. In particular every term is finite, so $h_A(S)$ is
+never $\infty$ on a state that has a plan. Summing, $h_A(S)\le\sum_k m_k=m$. ∎
