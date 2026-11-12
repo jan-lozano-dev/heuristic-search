@@ -9,7 +9,7 @@
 | --- | --- |
 | pddl/ | A clear definition of the problem's conditions, actions, states, and goal. |
 | documentacio/ | A formal model and proofs of why and how we built our heuristics and our code. Benchmark results and a study. | 
-| act1-cerca/ |  Different algorithms to solve the same problem, with different heuristics from simpler to more sophisticated. BFS, DFS, IDS, A* in addition to two different heuristics. |
+| ac1-cerca/ |  Different algorithms to solve the same problem, with different heuristics from simpler to more sophisticated. BFS, DFS, IDS, A* in addition to two different heuristics. |
 
 ## Formal model
 
