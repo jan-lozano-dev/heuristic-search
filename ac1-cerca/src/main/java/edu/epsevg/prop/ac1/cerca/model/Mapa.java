@@ -30,14 +30,19 @@ public class Mapa extends MapaBase {
 
     @Override
     public boolean equals(Object o) {
-        //@TODO: implementar
-        return false;
+        if(this == o) return true; // if o is same Mapa object, equals true
+        if(!(o instanceof Mapa)) return false; // if object not datatype Mapa, equals false
+        Mapa other = (Mapa) o;
+        return agents.equals(other.agents) &&
+            Arrays.deepEquals(grid, other.grid);
     }
 
     @Override
     public int hashCode() {
-        //@TODO: implementar
-        return 0;
+        // A hashing function turns a state into one int. hashcode picks the bucket
+        int result = agents.hashCode();
+        result = 31 * result + Arrays.deepHashCode(grid);
+        return result;
     }
 
     /**
