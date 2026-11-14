@@ -1,27 +1,30 @@
 package edu.epsevg.prop.ac1.cerca;
 
-import edu.epsevg.prop.ac1.cerca.model.Mapa;
-import edu.epsevg.prop.ac1.model.Moviment;
-import edu.epsevg.prop.ac1.resultat.ResultatCerca;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
-import java.util.*;
-
-public class CercaBFS extends Cerca {
+/**
+ * Breadth-first search: the general loop of {@link CercaBase} with a FIFO open list.
+ * Nodes are explored in order of depth and every move costs 1, so the first goal
+ * explored has minimum length (optimal).
+ */
+public class CercaBFS extends CercaBase {
 
     public CercaBFS(boolean usarLNT) {
         super(usarLNT);
     }
 
     @Override
-    public void ferCerca(Mapa inicial, ResultatCerca rc) {
-        //@TODO: implementar
+    protected Queue<Node> nousOberts() {
+        return new ArrayDeque<>();
     }
-    
+
     /**
      * Torna el nom de la cerca.
      * @return el nom de la cerca.
      */
-    public String getNomCerca(){
+    @Override
+    public String getNomCerca() {
         return "BFS";
-    }    
+    }
 }
